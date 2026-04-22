@@ -7,11 +7,11 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "agents")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Agent {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -27,17 +27,18 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role;
-
-    @Column(name = "is_verified", nullable = false)
     @Builder.Default
-    private Boolean isVerified = false;
+    private AgentRole role = AgentRole.support_agent;
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 
     @Column(name = "created_at", nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public enum UserRole {
-        guest, host, admin
+    public enum AgentRole {
+        support_agent, support_lead, admin
     }
 }
