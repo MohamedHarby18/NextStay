@@ -1,48 +1,25 @@
 package com.nextstay.nextstaymain.identityservice.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.nextstay.nextstaymain.identityservice.entity.User;
+import com.nextstay.nextstaymain.identityservice.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.nextstay.nextstaymain.identityservice.dto.CreateAgentRequest;
-import com.nextstay.nextstaymain.identityservice.dto.CreateUserRequest;
-import com.nextstay.nextstaymain.identityservice.entity.User;
-import com.nextstay.nextstaymain.identityservice.service.UserService;
-import com.nextstay.nextstaymain.supportservice.entity.Agent;
-import com.nextstay.nextstaymain.supportservice.service.AgentService;
+import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AgentService agentService;
 
-    @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
-        User user = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
-    }
+    private final UserService userService;
 
-    @PostMapping("/create-admin")
-    public ResponseEntity<User> createAdmin(@RequestBody CreateUserRequest request) {
-        request.setRole("admin");
-        User user = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
-    }
-
-    @PostMapping("/create-agent")
-    public ResponseEntity<Agent> createAgent(@RequestBody CreateAgentRequest request) {
-        Agent agent = agentService.createAgent(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(agent);
-    }
-
-    @PostMapping("/create-support-agent")
-    public ResponseEntity<Agent> createSupportAgent(@RequestBody CreateAgentRequest request) {
-        request.setRole("support_agent");
-        Agent agent = agentService.createAgent(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(agent);
+    // A protected "Check My Profile" endpoint
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
+        // Principal is a built-in Spring object that holds the logged-in user's email
+        User user = userService.getByEmail(principal.getName());
+        return ResponseEntity.ok(user);
     }
 }

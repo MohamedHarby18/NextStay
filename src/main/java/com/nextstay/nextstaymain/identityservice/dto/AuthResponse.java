@@ -1,5 +1,8 @@
 package com.nextstay.nextstaymain.identityservice.dto;
 
-public class AuthResponse {
-
-}
+public record AuthResponse(
+    String accessToken,
+    String email,
+    String role,
+    long expiresAt
+) {}

@@ -1,11 +1,14 @@
 package com.nextstay.nextstaymain.supportservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.nextstay.nextstaymain.identityservice.entity.User;
+import com.nextstay.nextstaymain.identityservice.entity.UserRole;
 
 @Data
 @Entity
@@ -24,7 +27,7 @@ public class SupportTicket {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
-    private User.UserRole userRole;
+    private UserRole userRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_agent_id")
