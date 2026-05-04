@@ -41,4 +41,13 @@ public class Agent {
     public enum AgentRole {
         support_agent, support_lead, admin
     }
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "profile_photo")
+    private String profilePhoto;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
 }

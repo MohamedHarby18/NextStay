@@ -11,18 +11,37 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+    @Value("${password.encoding.pepper}") //retrieves pepper
+    private String pepper;
+
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                // wraps bcrypt to include pepper for extra layer of security
+                return bCryptPasswordEncoder.encode(rawPassword + pepper);
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return bCryptPasswordEncoder.matches(rawPassword + pepper, encodedPassword);
+            }
+        };
     }
 
     @Bean

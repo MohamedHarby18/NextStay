@@ -1,5 +1,8 @@
 package com.nextstay.nextstaymain.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateUserRequest {
+
+    @Email
+    @NotBlank
     private String email;
+
+    @NotBlank
     private String name;
-    private String passwordHash;
+
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
+    
     private String role;
 }

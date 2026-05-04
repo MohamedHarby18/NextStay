@@ -38,7 +38,15 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public enum UserRole {
-        guest, host, admin
+        guest, host, admin //, support_agent
     }
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "profile_photo")
+    private String profilePhoto;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
 }
-// yarab n5las

@@ -7,4 +7,8 @@ import java.util.UUID;
 
 public interface AgentRepository extends JpaRepository<Agent, UUID> {
     Optional<Agent> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+    // Used during user profile updates
+    boolean existsByEmailAndIdNot(String email, UUID currentId);
 }
