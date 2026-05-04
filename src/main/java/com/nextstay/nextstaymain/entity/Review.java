@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
 
 @Data
 @Entity
@@ -29,6 +32,8 @@ public class Review {
     private Listing listing;
 
     @Column(nullable = false)
+    @Min(value = 1, message = "Rating must be at least 1")
+    @Max(value = 5, message = "Rating cannot exceed 5")
     private Integer rating;
 
     @Column(columnDefinition = "TEXT")
@@ -37,4 +42,5 @@ public class Review {
     @Column(name = "created_at", nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
 }
