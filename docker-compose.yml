@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: nextstay-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: nextstay_main
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nextstay-network
+
+  service-discovery:
+    image: nextstay/service-discovery:latest
+    container_name: service-discovery
+    ports:
+      - "8761:8761"
+    environment:
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - mysql
+
+  api-gateway:
+    image: nextstay/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-discovery:8761/eureka/
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - service-discovery
+
+  user-service:
+    image: nextstay/user-service:latest
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/nextstay_user_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-discovery:8761/eureka/
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - mysql
+      - service-discovery
+
+  property-service:
+    image: nextstay/property-service:latest
+    container_name: property-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/nextstay_property_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-discovery:8761/eureka/
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - mysql
+      - service-discovery
+
+  booking-service:
+    image: nextstay/booking-service:latest
+    container_name: booking-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/nextstay_booking_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-discovery:8761/eureka/
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - mysql
+      - service-discovery
+
+  payment-service:
+    image: nextstay/payment-service:latest
+    container_name: payment-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/nextstay_payment_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root_password
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-discovery:8761/eureka/
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - mysql
+      - service-discovery
+
+  notification-service:
+    image: nextstay/notification-service:latest
+    container_name: notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-discovery:8761/eureka/
+      JAVA_OPTS: "-Xmx256m"
+    networks:
+      - nextstay-network
+    depends_on:
+      - service-discovery
+
+volumes:
+  mysql_data:
+
+networks:
+  nextstay-network:
+    driver: bridge
